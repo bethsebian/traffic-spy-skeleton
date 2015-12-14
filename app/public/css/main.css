@@ -1,0 +1,17 @@
+#navbar {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  background-color: #dddddd;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+#nav_li {
+  float: left;
+  display: inline;
+  padding: 8px;
+  font-size: 16px;
+  font-weight: 600;
+}
