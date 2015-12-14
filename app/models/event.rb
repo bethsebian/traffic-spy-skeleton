@@ -2,6 +2,10 @@ class Event < ActiveRecord::Base
   validates :name, presence: true, uniqueness: true
   has_many :requests
 
+  def total_requests(app_id)
+    requests.where(application_id: app_id).all.count
+  end
+
   def requests_for_given_app(app_id)
     requests.where(application_id: app_id)
   end
