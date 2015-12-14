@@ -30,9 +30,9 @@ module TrafficSpy
       @app = Application.find_by(identifier: id)
 
       if @app.nil?
-        erb :error, locals: {message: "Application not registered"}
+        erb :error, locals: {message: "Application not registered", link: ""}
       elsif @app.requests.empty?
-        erb :error, locals: {message: "No documented requests"}
+        erb :error, locals: {message: "No documented requests", link: ""}
       else
         erb :urls
       end
@@ -43,7 +43,7 @@ module TrafficSpy
       if @url_ = application.urls.find_by(path: splat)
         erb :url
       else
-        erb :error, locals: {message: "No documented requests"}
+        erb :error, locals: {message: "No documented requests", link: ""}
       end
     end
 
@@ -51,7 +51,7 @@ module TrafficSpy
       @application = Application.find_by(identifier: id)
 
       if @application.events.count == 0
-        erb :error, locals: {message: "No events have been defined"}
+        erb :error, locals: {message: "No events have been defined", link: ""}
       else
         erb :events
       end
@@ -60,13 +60,20 @@ module TrafficSpy
     get '/sources/:id/events/:event_name' do |id, event_name|
       @app = Application.find_by(identifier: id)
       @event = Event.find_by(name: event_name)
-      @hour_breakdown = @event.sorted_list_by_hour(@app.id)
 
-      erb :event
+      if @event.nil?
+        erb :error, locals: { message: "Event not defined",
+                              link: "<a href='/sources/#{id}/events'>
+                              View #{id.capitalize} Events</a>"}
+      else
+        @event_total = @event.total_requests(@app.id)
+        @hour_breakdown = @event.sorted_list_by_hour(@app.id)
+        erb :event
+      end
     end
 
     not_found do
-      erb :error, locals: {message: "Oops! We don't know what you mean"}
+      erb :error, locals: {message: "Oops! We don't know what you mean", link: ""}
     end
   end
 end
